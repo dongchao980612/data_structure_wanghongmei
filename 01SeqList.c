@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAXSIZE 100
+#define MAXSIZE 6
 typedef int DataType;
 
 typedef struct {
@@ -10,18 +10,24 @@ typedef struct {
 } SeqList;
 
 void InitList(SeqList *L);
-void CreateList(SeqList *L,DataType arr[]);
+void CreateList(SeqList *L, DataType arr[], int n);
+void AppendList(SeqList *L, DataType data);
+
 void ShowList(SeqList *L);
 int  Length(SeqList *L);
 int  IsFull(SeqList *L) ;
 int  IsEmpty(SeqList *L);
 
 int main() {
-	DataType arr[6] = {1,2,3,4,5,6};
+	DataType arr[6] = {1, 2, 3, 4, 5, 6};
 	SeqList L;
 	InitList(&L);
+	// ShowList(&L);
+	CreateList(&L, arr, 6);
 	ShowList(&L);
-	CreateList(&L,arr);
+	AppendList(&L, 7);
+		AppendList(&L, 8);
+	ShowList(&L);
 	return 0;
 }
 
@@ -41,12 +47,29 @@ int  IsEmpty(SeqList *L) {
 	return L->length == 0;
 }
 
-void ShowList(SeqList *L){
-	if(IsEmpty(L)){
-		printf("空表\n");
+void ShowList(SeqList *L) {
+	if (IsEmpty(L)) {
+		printf("list is empty!\n");
 		return;
 	}
+
+	for (int i = 0; i < L->length; i++) {
+		printf("%d\t",	L->data[i]);
+	}
+	printf("\n");
 }
-void CreateList(SeqList *L,DataType arr[]){
-	
+void CreateList(SeqList *L, DataType arr[], int n) {
+	if (IsFull(L)) {
+		printf("list is full!\n");
+		return;
+	}
+	for (int i = 0; i < n; i++) {
+		L->data[i] = arr[i];
+	}
+	L->length = n;
 }
+void AppendList(SeqList *L, DataType data) {
+	L->data[L->length] = data;
+	L->length++;
+}
+
