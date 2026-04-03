@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 
 #define MAXSIZE 10
 typedef int DataType;
@@ -33,21 +32,20 @@ int main() {
 	int res = -1;
 
 	SeqList L;
-	InitList(&L);          // 必须先初始化
+	InitList(&L);
 	CreateList(&L, arr, 5);
 
 	printf("当前线性表的数据为：");
 	ShowList(&L);
 
 	InsertList(&L, 2, 8);
-	printf("当前线性表的数据为：");
+	printf("当前线性表插入数据后为：");
 	ShowList(&L);
 
 	printf("当前线性表的长度为：%d\n", LengthList(&L));
 
 	// 按值查找
-	printf("请输入查找的元素值：");
-	scanf("%d", &x);
+	x = 3;
 	pos = LocateList(&L, x);
 	if (pos != ERR) {
 		printf("元素%d的位置是%d\n", x, pos);
@@ -56,8 +54,7 @@ int main() {
 	}
 
 	// 按位查找
-	printf("请输入查找第几个元素：");
-	scanf("%d", &pos);
+	pos = 3;
 	res = GetList(&L, pos, &x);
 	if (res != ERR) {
 		printf("第%d位的元素是%d\n", pos, x);
@@ -66,8 +63,7 @@ int main() {
 	}
 
 	// 删除
-	printf("请输入删除第几个元素：");
-	scanf("%d", &pos);
+	pos = 3;
 	res = DeleteList(&L, pos, &x);
 	if (res != ERR) {
 		printf("删除第%d个的元素是%d\n", pos, x);
@@ -93,19 +89,23 @@ int LengthList(SeqList *L) {
 
 // 判断满
 int IsFull(SeqList *L) {
-	if (L == NULL) return 0;
+	if (L == NULL) {
+		return 0;
+	}
 	return L->length == MAXSIZE;
 }
 
 // 判断空
 int IsEmpty(SeqList *L) {
-	if (L == NULL) return 0;
+	if (L == NULL) {
+		return 0;
+	}
 	return L->length == 0;
 }
 
 // 打印
 void ShowList(SeqList *L) {
-	if (L == NULL || IsEmpty(L)) {
+	if (IsEmpty(L)) {
 		printf("顺序表是空的!\n");
 		return;
 	}
@@ -188,3 +188,4 @@ int DeleteList(SeqList *L, int pos, DataType* data) {
 	L->length--;
 	return OK;
 }
+
