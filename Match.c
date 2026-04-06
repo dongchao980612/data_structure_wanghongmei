@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define STACKSIZE 5
-typedef int DataType;
+#define STACKSIZE 100
+typedef char DataType;
 
 #define OK  0
 #define ERR -1
+
+#define LEFTOVER 2
+#define RIGHROVER -2
 
 typedef struct Node {
 	DataType data[STACKSIZE];
@@ -20,40 +23,57 @@ int PopStack(SeqStack* S, DataType *x) ;
 int GetTop(SeqStack* S, DataType *x) ;
 void ShowSeqStack(SeqStack* S) ;
 
+int Match(char *str);
+
 int main() {
+	char str[100];
+	scanf("%s", str);
+	
+	int res = Match(str);
+	
+	switch (res) {
+		case OK:
+			printf("括号匹配成功！\n");
+			break;
+		case LEFTOVER:
+			printf("左括号多余！\n");
+			break;
+		case RIGHROVER:
+			printf("右括号多余！\n");
+			break;
+		default:
+			printf("字符串有误！\n");
+			break;
+	}
+
+}
+// 括号匹配函数：成功返回1，失败返回0
+int Match(char *str) {
 	SeqStack S;
-	DataType x = -1;
-	int res = -1;
-	InitSeqStack(&S);
-	// ShowSeqStack(&S);
+	InitSeqStack(&S);  // 1. 初始化栈
+	char ch;           // 临时变量，接收出栈元素
 
-	PushStack(&S, 10);
-	PushStack(&S, 15);
-	ShowSeqStack(&S);
+	for (int i = 0; str[i] != '\0'; i++) {
+		if (str[i] == '(') {
+			// 左括号：入栈
+			PushStack(&S, str[i]);
+		}
+		else if (str[i] == ')') {
+			// 右括号：出栈
+			if (IsEmpty(&S)) {
+				return RIGHROVER;
+			}
+			PopStack(&S, &ch); // 用临时变量ch接收，不要改str！
+		}
 
-
-	res = GetTop(&S, &x);
-	if (res == OK) {
-		printf("栈顶元素是：%d\n", x);
-		ShowSeqStack(&S);
 	}
 
-	res = PopStack(&S, &x);
-	if (res == OK) {
-		printf("出栈元素是：%d\n", x);
-		ShowSeqStack(&S);
-	}
-
-	PushStack(&S, 20);
-
+	// 最终判断：栈空 = 完全匹配
 	if (IsEmpty(&S)) {
-		printf("栈空\n");
+		return OK;
 	} else {
-		printf("栈非空\n");
-		ShowSeqStack(&S);
+		return LEFTOVER;
 	}
-
-	return 0;
 }
 
 int IsEmpty(SeqStack* S) {
