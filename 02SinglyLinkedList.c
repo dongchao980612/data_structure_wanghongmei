@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 
 typedef int DataType;
 
@@ -35,10 +34,12 @@ int main() {
 
 	LinkList  L = NULL;
 	printf("当前单链表的数据为：");
-	ShowLinkList(L);
-	
+	// ShowLinkList(L);
+
 	// 初始化
 	L = InitLinkList();
+	ShowLinkList(L);
+	
 	CreateLinkList_tail(L, arr, 5);
 	printf("当前单链表的数据为：");
 	ShowLinkList(L);
@@ -131,7 +132,10 @@ void ShowLinkList(LinkList L) {
 	if (CheckNull(L)) {
 		return;
 	}
-
+	if (IsEmpty(L)) {
+		printf("链表空，[%s]失败\n", __func__);
+		return;
+	}
 	for (Node *p = L->next; p != NULL; p = p->next ) {
 		printf("%d->", p->data);
 	}
@@ -240,11 +244,11 @@ int DeleteLinkList(LinkList L, int pos, DataType *data) {
 }
 
 void DestroyLinkList(LinkList* L) {
-	Node *p, *q;
+	Node *tail, *q;
 
-	for (p = *L; p != NULL; p = q) {
-		q = p->next;  // 先保存下一个
-		free(p);      // 再释放当前
+	for (tail = *L; tail != NULL; tail = q) {
+		q = tail->next;  // 先保存下一个
+		free(tail);      // 再释放当前
 	}
 
 	*L = NULL; // 自动置空！

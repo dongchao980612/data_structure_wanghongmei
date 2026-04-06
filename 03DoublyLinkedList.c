@@ -23,7 +23,7 @@ int DeleteDLinkList(DLinkList L, int pos, DataType *data);
 
 int CheckNull(DLinkList L);
 
-
+int IsEmpty(DLinkList L);
 
 int main() {
 	DataType arr[5] = {1, 2, 3, 4, 5};
@@ -37,6 +37,8 @@ int main() {
 
 	// 初始化
 	L = InitDList();
+	ShowDLinkList(L);
+	
 	CreateDLinkList_tail(L, arr, 5);
 	printf("当前双链表的数据为：");
 	ShowDLinkList(L);
@@ -44,39 +46,39 @@ int main() {
 
 	// 插入
 	pos = 1;
-	x=999;
+	x = 999;
 	InsertDLinkList(L, pos, x);
 	printf("当前双链表的数据为：");
 	ShowDLinkList(L);
 	printf("当前双链表的长度为：%d\n", LengthDLinkList(L));
-	
-	
+
+
 	// 删除
 	pos = 1;
 	res = DeleteDLinkList(L, pos, &x);
-	
+
 	if (res != ERR) {
 		printf("删除第%d个的元素是%d\n", pos, x);
 		printf("当前双链表的数据为：");
 		ShowDLinkList(L);
 	}
-	
-	
+
+
 	return 0;
 }
 
-int LengthDLinkList(DLinkList  L){
+int LengthDLinkList(DLinkList  L) {
 	if (CheckNull(L)) {
 		return 0;
 	}
 	int cnt = 0;
-	
+
 	for (DNode *p = L->next; p != NULL; p = p->next) {
 		cnt++;
 	}
-	
+
 	return cnt;
-	
+
 }
 
 
@@ -85,7 +87,7 @@ int CheckNull(DLinkList L) {
 		printf("链表未初始化\n");
 		return ERR; // 表示未初始化
 	}
-	
+
 	return OK;     // 表示已初始化
 }
 
@@ -93,31 +95,34 @@ void ShowDLinkList(DLinkList L ) {
 	if (CheckNull(L)) {
 		return;
 	}
-	
+	if (IsEmpty(L)) {
+		printf("链表空，[%s]失败\n", __func__);
+		return;
+	}
 	for (DNode *p = L->next; p != NULL; p = p->next ) {
 		printf("%d<->", p->data);
 	}
-	
+
 	printf("NULL \n");
 }
 
 DLinkList InitDList() {
 	DLinkList head = (DNode*)malloc(sizeof(DNode));
-	
+
 	if (CheckNull(head)) {
 		return NULL;
 	}
-	
-	
+
+
 	head->next = NULL;
 	return head;
 }
 
-void CreateDLinkList_tail(DLinkList L, DataType arr[], int n){
+void CreateDLinkList_tail(DLinkList L, DataType arr[], int n) {
 	if (CheckNull(L)) {
 		return;
 	}
-	
+
 	DNode* tail = L;
 	for (int i = 0; i < n; i++) {
 		DNode* newNode = (DNode*)malloc(sizeof(DNode));
@@ -125,62 +130,68 @@ void CreateDLinkList_tail(DLinkList L, DataType arr[], int n){
 		newNode->data = arr[i];
 		newNode->next = NULL;
 		tail->next = newNode;
-		newNode->prior=tail;
+		newNode->prior = tail;
 		tail = newNode;
 	}
-	
+
 	tail->next = NULL;
-	
+
 }
 
-int InsertDLinkList(DLinkList L, int pos, DataType data){
+int InsertDLinkList(DLinkList L, int pos, DataType data) {
 	if (CheckNull(L)) {
 		return ERR;
 	}
-	
+
 	int count = 0;
 	DNode *p = L;
-	
+
 	if (pos > LengthDLinkList(L) +1 || pos <= 0) {
 		printf("[%s] 下标越界\n", __func__);
 		return	 ERR	;
 	}
-	
+
 	for (;  count < pos - 1; p = p->next, count++);
-	
-	
+
+
 	DNode* newNode = (DNode*)malloc(sizeof(DNode));
-	newNode->prior=p;
-	newNode->next=p->next;
-	newNode->data=data;
-	p->next->prior=newNode;
-	p->next=newNode;
+	if (CheckNull(newNode)) {
+		return ERR;
+	}
+	newNode->prior = p;
+	newNode->next = p->next;
+	newNode->data = data;
+	p->next->prior = newNode;
+	p->next = newNode;
 	return OK;
 }
-int DeleteDLinkList(DLinkList L, int pos, DataType *data){
+int DeleteDLinkList(DLinkList L, int pos, DataType *data) {
 	if (CheckNull(L)) {
 		return ERR;
 	}
-	
+
 	int count = 0;
 	DNode *p = L;
-	
+
 	if (pos > LengthDLinkList(L) || pos <= 0) {
 		printf("[%s] 下标越界\n", __func__);
 		return	 ERR	;
 	}
-	
-	for (; count < pos-1; p = p->next, count++);
-	
+
+	for (; count < pos - 1; p = p->next, count++);
+
 	DNode *q = p->next;
 	*data = q->data;
-	
+
 	// 处理pos为最后一个元素，指针报错
 	if (p->next->next != NULL) {
 		p->next->next->prior = p;
 	}
 	p->next = p->next->next;
-	
+
 	free(q);
 	return OK;
+}
+int IsEmpty(DLinkList L) {
+	return L->next == NULL;
 }
